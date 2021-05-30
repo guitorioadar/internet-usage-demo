@@ -17,14 +17,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var cellularSentLabel: UILabel!
     @IBOutlet weak var cellularReceivedLabel: UILabel!
     @IBOutlet weak var cellularTotalLabel: UILabel!
-
+    
     // MARK:- Private Properties
     private var timer: DispatchSourceTimer?
-
+    
     // MARK:- ViewController Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         if DeviceManager.rebootOccuredFromLastTime {
             // New reboot detected
             // Store data usage of last session with data usage of all session
@@ -33,16 +33,16 @@ class ViewController: UIViewController {
         }
         startTimer()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     deinit {
         self.stopTimer()
     }
-
+    
     // MARK:- Private Functions
     private func startTimer() {
         let queue = DispatchQueue(label: "com.domain.app.timer")  // you can also use `DispatchQueue.main`, if you want
@@ -59,18 +59,18 @@ class ViewController: UIViewController {
         timer?.cancel()
         timer = nil
     }
-
+    
     private func periodicUpdateDatabase() {
         let currentDataUsageInfo = DataUsage.currentSessionDataUsageInfo
         DataUsage.saveCurrent(dataUsageInfo: currentDataUsageInfo)
         updateLabels()
     }
-
+    
     private func updateLabels() {
         let dataUsageInfo = DataUsage.allSessionsDataUsageInfo
         updateLabels(with: dataUsageInfo)
     }
-
+    
     private func updateLabels(with dataUsageInfo: DataUsageInfo) {
         let wifiSentInMB = dataUsageInfo.wifiSent
         let wifiReceivedInMB = dataUsageInfo.wifiReceived
@@ -82,18 +82,18 @@ class ViewController: UIViewController {
             self.wifiSentLabel.text = wifiSentInMB.toMegabytesString
             self.wifiReceivedLabel.text = wifiReceivedInMB.toMegabytesString
             self.wifiTotalLabel.text = totalWiFiDataInMB.toMegabytesString
-
+            
             self.cellularSentLabel.text = cellularSentInMB.toMegabytesString
             self.cellularReceivedLabel.text = cellularReceivedInMB.toMegabytesString
             self.cellularTotalLabel.text = totalCellularDataInMB.toMegabytesString
         }
     }
-
+    
     // MARK:- Action Methods
     @IBAction func refreshButtonPressed(_ sender: UIBarButtonItem) {
         updateLabels()
     }
-
+    
 }
 
 private extension UInt32 {
